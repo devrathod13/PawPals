@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String
+  adoptions     Adoption[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Adoption {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  animalId      Int
+  animalType    String
+  status        AdoptionStatus @default(PENDING)
+  applicationDate DateTime @default(now())
+  notes         String?
+}
+
+enum AdoptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
