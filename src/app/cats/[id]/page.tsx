@@ -2,10 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-<<<<<<< HEAD
 import React from 'react';
-=======
->>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
 
 interface Cat {
   id: string;
@@ -34,51 +31,35 @@ const catData: Cat[] = [
   {
     id: "1",
     name: "Whiskers",
-    breed: "Siamese",
-    age: 5,
-    gender: "Female",
-    description: "Elegant and sophisticated Siamese cat with a regal demeanor.",
-    personality: ["Independent", "Vocal", "Intelligent"],
-    image: "/whisker.jpg",
-    adoptionFee: 200,
-    medicalHistory: "Up to date on vaccinations, spayed",
-    specialNeeds: "Prefers quiet environment",
-    energyLevel: "Low",
-    goodWith: ["Adults", "Seniors"]
-  },
-  {
-    id: "2",
-    name: "Oliver",
     breed: "Maine Coon",
     age: 3,
     gender: "Male",
-    description: "Fluffy and gentle giant who loves cuddles and playtime.",
-    personality: ["Affectionate", "Playful", "Social"],
-    image: "/oliver.jpg",
-    adoptionFee: 250,
+    description: "Fluffy and friendly Maine Coon who loves cuddles and playing with toys.",
+    personality: ["Friendly", "Playful", "Gentle"],
+    image: "/whiskers.jpg",
+    adoptionFee: 200,
     medicalHistory: "Up to date on vaccinations, neutered",
     specialNeeds: "None",
     energyLevel: "Medium",
-    goodWith: ["Children", "Other Cats"]
+    goodWith: ["Children", "Other Cats", "Families"]
   },
   {
-    id: "3",
+    id: "2",
     name: "Luna",
-    breed: "Tabby",
-    age: 2,
-    gender: "Female",
-    description: "Curious and energetic young cat seeking an adventurous home.",
-    personality: ["Playful", "Curious", "Mischievous"],
-    image: "/luna4.jpg",
-    adoptionFee: 150,
-    medicalHistory: "Initial vaccinations complete",
-    specialNeeds: "Needs interactive toys",
+    breed: "Siamese", 
+    age: 5,
+    gender: "Female", 
+    description: "Elegant Siamese with a vocal personality and love for attention.",
+    personality: ["Vocal", "Affectionate", "Intelligent"],
+    image: "/luna.jpg",
+    adoptionFee: 250,
+    medicalHistory: "Up to date on vaccinations, spayed",
+    specialNeeds: "Requires lots of interaction",
     energyLevel: "High",
-    goodWith: ["Active Families", "Single Adults"]
+    goodWith: ["Adults", "Single Households"]
   }
 ];
 
-<<<<<<< HEAD
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const cat = catData.find(c => c.id === params.id);
   return {
@@ -88,48 +69,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default function CatDetailPage({ params }: PageProps): Promise<React.ReactElement> {
-=======
-type CatParams = {
-  params: { 
-    id: string 
-  } & Promise<{
-    then: () => void;
-    catch: () => void;
-    finally: () => void;
-    [Symbol.toStringTag]: string;
-  }>;
-  searchParams?: { 
-    [key: string]: string | string[] | undefined 
-  } & Promise<{
-    then: () => void;
-    catch: () => void;
-    finally: () => void;
-    [Symbol.toStringTag]: string;
-  }>;
-}
-
-export async function generateMetadata({ params, searchParams }: CatParams): Promise<Metadata> {
->>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
   const cat = catData.find(c => c.id === params.id);
-  
-  // Optional: log or use searchParams if needed
-  if (searchParams && Object.keys(searchParams).length > 0) {
-    console.log('Metadata search params:', searchParams);
-  }
-
-  return {
-    title: cat ? `${cat.name} - PawPals Adoption` : 'Cat Not Found',
-    description: cat ? `Adopt ${cat.name}, a ${cat.breed} looking for a forever home` : 'Cat not found'
-  } as Metadata;
-}
-
-export default function CatDetailPage({ params, searchParams }: CatParams) {
-  const cat = catData.find(c => c.id === params.id);
-
-  // Optional: log or use searchParams if needed
-  if (searchParams && Object.keys(searchParams).length > 0) {
-    console.log('Page search params:', searchParams);
-  }
 
   if (!cat) {
     return Promise.resolve(
@@ -138,7 +78,7 @@ export default function CatDetailPage({ params, searchParams }: CatParams) {
   }
 
   return Promise.resolve(
-    <div className="min-h-screen bg-purple-50 py-16">
+    <div className="min-h-screen bg-blue-50 py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12">
           {/* Image Section */}
@@ -156,7 +96,7 @@ export default function CatDetailPage({ params, searchParams }: CatParams) {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-5xl font-extrabold text-gray-900">{cat.name}</h1>
-              <span className="bg-purple-100 text-purple-800 px-4 py-2 rounded-full">
+              <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full">
                 {cat.breed}
               </span>
             </div>
@@ -182,7 +122,7 @@ export default function CatDetailPage({ params, searchParams }: CatParams) {
                   {cat.personality.map((trait) => (
                     <span 
                       key={trait} 
-                      className="bg-purple-50 text-purple-600 px-3 py-1 rounded-full text-sm"
+                      className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm"
                     >
                       {trait}
                     </span>

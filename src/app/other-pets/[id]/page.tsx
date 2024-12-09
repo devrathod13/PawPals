@@ -2,31 +2,8 @@
 import { Metadata } from "next";
 import React from 'react';
 import Link from "next/link";
-<<<<<<< HEAD
 import Image from "next/image";
 import { getOtherPetById, OtherPet } from "@/lib/data/other-pets";
-=======
-import { Metadata } from 'next';
-
-type OtherPetParams = {
-  params: { 
-    id: string 
-  } & Promise<{
-    then: () => void;
-    catch: () => void;
-    finally: () => void;
-    [Symbol.toStringTag]: string;
-  }>;
-  searchParams?: { 
-    [key: string]: string | string[] | undefined 
-  } & Promise<{
-    then: () => void;
-    catch: () => void;
-    finally: () => void;
-    [Symbol.toStringTag]: string;
-  }>;
-}
->>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
 
 type PageProps = {
   params: { 
@@ -35,7 +12,6 @@ type PageProps = {
   searchParams?: { [key: string]: string | string[] | undefined } & Promise<any>;
 }
 
-<<<<<<< HEAD
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const pet: OtherPet | null = await getOtherPetById(params.id);
   return {
@@ -44,31 +20,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function OtherPetDetailPage({ params }: PageProps): Promise<React.ReactNode> {
+export default async function OtherPetDetailPage({ params }: PageProps): Promise<React.ReactElement> {
   const pet: OtherPet | null = await getOtherPetById(params.id);
-=======
-export async function generateMetadata({ params, searchParams }: OtherPetParams): Promise<Metadata> {
-  const pet = otherPetsData.find(p => p.id === params.id);
-  
-  // Optional: log or use searchParams if needed
-  if (searchParams && Object.keys(searchParams).length > 0) {
-    console.log('Metadata search params:', searchParams);
-  }
-
-  return {
-    title: pet ? `${pet.name} - PawPals Adoption` : 'Pet Not Found',
-    description: pet ? `Adopt ${pet.name}, a ${pet.type} looking for a forever home` : 'Pet not found'
-  } as Metadata;
-}
-
-export default function OtherPetDetailPage({ params, searchParams }: OtherPetParams) {
-  const pet = otherPetsData.find(p => p.id === params.id);
-
-  // Optional: log or use searchParams if needed
-  if (searchParams && Object.keys(searchParams).length > 0) {
-    console.log('Page search params:', searchParams);
-  }
->>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
 
   if (!pet) {
     return (
