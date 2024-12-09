@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { dogs } from "@/lib/data/dogs";
 import Link from "next/link";
 import { Metadata } from "next";
 import React from 'react';
