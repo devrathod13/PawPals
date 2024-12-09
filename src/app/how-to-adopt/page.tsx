@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HowToAdoptPage() {
   const adoptionSteps = [
@@ -20,7 +20,7 @@ export default function HowToAdoptPage() {
     },
     {
       title: "Home Check",
-      description: "We'll verify your home is ready for your new family member.",
+      description: "We&#39;ll verify your home is ready for your new family member.",
       icon: "🏡"
     },
     {
@@ -35,7 +35,7 @@ export default function HowToAdoptPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4 text-gray-900">Adoption Process</h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Bringing a new pet into your life is a beautiful journey. We're here to make it smooth and joyful.
+          Bringing a new pet into your life is a beautiful journey. We&#39;re here to make it smooth and joyful.
         </p>
       </div>
 
@@ -82,9 +82,11 @@ export default function HowToAdoptPage() {
         </div>
         <div className="relative">
           <div className="bg-blue-50 rounded-xl overflow-hidden shadow-lg transform transition-transform hover:scale-105">
-            <img 
+            <Image 
               src="/adopt.jpg" 
               alt="Happy adopted dog with family" 
+              width={600}
+              height={400}
               className="w-full h-96 object-cover"
             />
             <div className="absolute inset-0 bg-blue-900 bg-opacity-30 flex items-end p-6">

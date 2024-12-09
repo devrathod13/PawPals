@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
-import { dogs } from "@/lib/data/dogs";
 import Link from "next/link";
 import { Metadata } from "next";
 import React from 'react';
 
-type Dog = {
+interface Dog {
   id: string;
   name: string;
   breed: string;
@@ -18,12 +18,13 @@ type Dog = {
   specialNeeds: string;
   energyLevel: string;
   goodWith: string[];
-};
+}
 
-type DogParams = {
+type PageProps = {
   params: { 
     id: string 
-  }
+  } & Promise<any>;
+  searchParams?: { [key: string]: string | string[] | undefined } & Promise<any>;
 }
 
 const dogData: Dog[] = [
@@ -53,9 +54,9 @@ const dogData: Dog[] = [
     image: "/luna.jpg",
     adoptionFee: 300,
     medicalHistory: "Up to date on vaccinations, spayed",
-    specialNeeds: "Requires experienced owner",
+    specialNeeds: "Requires experienced handler",
     energyLevel: "Medium",
-    goodWith: ["Adults", "Experienced Handlers"]
+    goodWith: ["Adults", "Experienced Owners"]
   },
   {
     id: "3",
@@ -74,19 +75,19 @@ const dogData: Dog[] = [
   }
 ];
 
-export async function generateMetadata({ params }: DogParams): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const dog = dogData.find(d => d.id === params.id);
   return {
     title: dog ? `${dog.name} - PawPals Adoption` : 'Dog Not Found',
     description: dog ? `Adopt ${dog.name}, a ${dog.breed} looking for a forever home` : 'Dog not found'
-  } as Metadata;
+  };
 }
 
-export default function DogDetailPage({ params }: DogParams): React.ReactElement {
+export default function DogDetailPage({ params }: PageProps): Promise<React.ReactElement> {
   const dog = dogData.find(d => d.id === params.id);
 
   if (!dog) {
-    return (
+    return Promise.resolve(
       <div className="container mx-auto px-4 py-12 text-center">
         <h1 className="text-4xl font-bold mb-4">Dog Not Found</h1>
         <Link href="/dogs" className="btn-primary">
@@ -96,7 +97,7 @@ export default function DogDetailPage({ params }: DogParams): React.ReactElement
     );
   }
 
-  return (
+  return Promise.resolve(
     <div className="min-h-screen bg-blue-50 py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12">

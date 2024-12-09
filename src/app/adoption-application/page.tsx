@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect, useCallback } from 'react';
+import { useState, FormEvent, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,8 +13,8 @@ interface AdoptionFormData {
   phone: string;
   address: string;
   city: string;
-  state: string;
-  zipCode: string;
+  province: string;
+  postalCode: string;
   homeType: string;
   hasYard: boolean;
   yardSize: string;
@@ -29,19 +29,21 @@ interface AdoptionFormData {
   emergencyContactPhone: string;
 }
 
-// US States for dropdown
-const US_STATES = [
-  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 
-  'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 
-  'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 
-  'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 
-  'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 
-  'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 
-  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 
-  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+// Canadian Provinces and Territories
+const CANADIAN_PROVINCES_TERRITORIES = [
+  'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick', 
+  'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia', 
+  'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec', 'Saskatchewan', 'Yukon'
 ];
 
-export default function AdoptionApplicationPage() {
+// Validate Canadian Postal Code
+const isValidCanadianPostalCode = (postalCode: string): boolean => {
+  // Canadian postal code format: A1A 1A1 (letter-number-letter number-letter-number)
+  const canadianPostalCodeRegex = /^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ] \d[ABCEGHJKLMNPRSTVWXYZ]\d$/i;
+  return canadianPostalCodeRegex.test(postalCode);
+};
+
+function AdoptionApplicationContent() {
   const searchParams = useSearchParams();
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,8 +60,8 @@ export default function AdoptionApplicationPage() {
     phone: '',
     address: '',
     city: '',
-    state: '',
-    zipCode: '',
+    province: '',
+    postalCode: '',
     homeType: '',
     hasYard: false,
     yardSize: '',
@@ -113,9 +115,11 @@ export default function AdoptionApplicationPage() {
         [name]: (e.target as HTMLInputElement).checked
       }));
     } else {
-      // Special handling for phone number formatting
+      // Special handling for phone number and postal code formatting
       const processedValue = name === 'phone' 
         ? formatPhoneNumber(value) 
+        : name === 'postalCode'
+        ? value.toUpperCase().replace(/\s/g, '').replace(/(.{3})/, '$1 ')
         : value;
 
       setFormData(prev => ({
@@ -128,6 +132,13 @@ export default function AdoptionApplicationPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Validate postal code
+    if (!isValidCanadianPostalCode(formData.postalCode)) {
+      toast.error('Please enter a valid Canadian postal code (format: A1A 1A1)');
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       // Prepare submission data with timestamp and unique ID
@@ -163,8 +174,8 @@ export default function AdoptionApplicationPage() {
         phone: '',
         address: '',
         city: '',
-        state: '',
-        zipCode: '',
+        province: '',
+        postalCode: '',
         homeType: '',
         hasYard: false,
         yardSize: '',
@@ -344,35 +355,35 @@ export default function AdoptionApplicationPage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="state" className="block text-sm font-medium text-gray-700">
-                    State *
+                  <label htmlFor="province" className="block text-sm font-medium text-gray-700">
+                    Province *
                   </label>
                   <select
-                    id="state"
-                    name="state"
+                    id="province"
+                    name="province"
                     required
-                    value={formData.state}
+                    value={formData.province}
                     onChange={handleChange}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                   >
-                    <option value="">Select State</option>
-                    {US_STATES.map(state => (
-                      <option key={state} value={state}>{state}</option>
+                    <option value="">Select Province</option>
+                    {CANADIAN_PROVINCES_TERRITORIES.map(province => (
+                      <option key={province} value={province}>{province}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">
-                    Zip Code *
+                  <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
+                    Postal Code *
                   </label>
                   <input
                     type="text"
-                    id="zipCode"
-                    name="zipCode"
-                    pattern="\d{5}(-\d{4})?"
-                    placeholder="12345 or 12345-6789"
+                    id="postalCode"
+                    name="postalCode"
+                    pattern="[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] [0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]"
+                    placeholder="A1A 1A1"
                     required
-                    value={formData.zipCode}
+                    value={formData.postalCode}
                     onChange={handleChange}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
                   />
@@ -601,5 +612,13 @@ export default function AdoptionApplicationPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AdoptionApplicationPage() {
+  return (
+    <Suspense fallback={<div>Loading application...</div>}>
+      <AdoptionApplicationContent />
+    </Suspense>
   );
 }

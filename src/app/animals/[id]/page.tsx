@@ -1,31 +1,31 @@
-import Image from "next/image";
-import { animals } from "@/lib/data/animals";
-import Link from "next/link";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Metadata } from "next";
 import React from 'react';
+import Link from "next/link";
+import Image from "next/image";
+import { getAnimalById } from "@/lib/data/animals";
 
-type Params = {
+type PageProps = {
   params: { 
     id: string 
-  }
+  } & Promise<any>;
+  searchParams?: { [key: string]: string | string[] | undefined } & Promise<any>;
 }
 
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const animal = animals.find(a => a.id === parseInt(params.id));
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const animal = await getAnimalById(params.id);
   return {
     title: animal ? `${animal.name} - PawPals Adoption` : 'Animal Not Found',
     description: animal ? `Adopt ${animal.name}, a ${animal.breed} looking for a forever home` : 'Animal not found'
-  } as Metadata;
+  };
 }
 
 export async function generateStaticParams() {
-  return animals.map((animal) => ({
-    id: animal.id.toString(),
-  }));
+  return [];
 }
 
-export default function AnimalProfilePage({ params }: Params) {
-  const animal = animals.find(a => a.id === parseInt(params.id));
+export default async function AnimalProfilePage({ params }: PageProps): Promise<React.ReactElement> {
+  const animal = await getAnimalById(params.id);
 
   if (!animal) {
     return (
@@ -43,111 +43,42 @@ export default function AnimalProfilePage({ params }: Params) {
       <div className="grid md:grid-cols-2 gap-12">
         {/* Image Gallery */}
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-4">
-            {animal.images.map((img, index) => (
-              <Image 
-                key={index}
-                src={img} 
-                alt={`${animal.name} - Image ${index + 1}`} 
-                width={300} 
-                height={300} 
-                className="rounded-xl object-cover h-48 w-full"
-              />
-            ))}
+          <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
+            <Image 
+              src={animal.imageUrl} 
+              alt={`${animal.name} profile`} 
+              fill 
+              className="object-cover" 
+              priority 
+            />
           </div>
         </div>
 
         {/* Animal Details */}
         <div>
           <h1 className="text-4xl font-bold mb-4">{animal.name}</h1>
-          
-          <div className="bg-blue-50 p-6 rounded-xl mb-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <p><strong>Breed:</strong> {animal.breed}</p>
+            </div>
+            
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="font-semibold text-gray-600">Breed</p>
-                <p className="text-lg">{animal.breed}</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-600">Age</p>
-                <p className="text-lg">{animal.age} years</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-600">Gender</p>
-                <p className="text-lg">{animal.gender}</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-600">Size</p>
-                <p className="text-lg">{animal.size}</p>
+                <p><strong>Age:</strong> {animal.age}</p>
+                <p><strong>Gender:</strong> {animal.gender}</p>
               </div>
             </div>
+
+            <p className="mt-4">{animal.description}</p>
+            
+            {/* Adoption Button */}
+            <Link 
+              href={`/adopt/${animal.id}`} 
+              className="btn-primary mt-6"
+            >
+              Adopt {animal.name}
+            </Link>
           </div>
-
-          <h2 className="text-2xl font-semibold mb-3">About {animal.name}</h2>
-          <p className="text-gray-700 mb-6">{animal.description}</p>
-
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2">Personality</h3>
-            <div className="flex flex-wrap gap-2">
-              {animal.personality.map(trait => (
-                <span 
-                  key={trait} 
-                  className="bg-primary-50 text-primary-800 px-3 py-1 rounded-full text-sm"
-                >
-                  {trait}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-green-50 p-6 rounded-xl mb-6">
-            <h3 className="text-xl font-semibold mb-4">Adoption Information</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="font-semibold text-gray-600">Adoption Fee</p>
-                <p className="text-lg font-bold text-primary">${animal.adoptionFee}</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-600">Medical History</p>
-                <ul className="list-disc list-inside text-gray-700">
-                  {animal.medicalHistory.map(history => (
-                    <li key={history}>{history}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-2">Good With</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <p className="font-semibold">Dogs</p>
-                <p>{animal.goodWith.dogs ? '✅ Yes' : '❌ No'}</p>
-              </div>
-              <div className="text-center">
-                <p className="font-semibold">Cats</p>
-                <p>{animal.goodWith.cats ? '✅ Yes' : '❌ No'}</p>
-              </div>
-              <div className="text-center">
-                <p className="font-semibold">Children</p>
-                <p>{animal.goodWith.children ? '✅ Yes' : '❌ No'}</p>
-              </div>
-            </div>
-          </div>
-
-          {animal.specialNeeds && (
-            <div className="bg-yellow-50 p-4 rounded-xl mb-6">
-              <h3 className="text-xl font-semibold mb-2">Special Needs</h3>
-              <p className="text-gray-700">{animal.specialNeeds}</p>
-            </div>
-          )}
-
-          <Link 
-            href={`/adopt/${animal.id}`} 
-            className="btn-primary w-full py-3 text-center text-lg"
-          >
-            Adopt {animal.name}
-          </Link>
         </div>
       </div>
     </div>

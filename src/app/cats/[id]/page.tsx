@@ -1,7 +1,33 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 import Link from "next/link";
+import { Metadata } from "next";
+import React from 'react';
 
-const catData = [
+interface Cat {
+  id: string;
+  name: string;
+  breed: string;
+  age: number;
+  gender: string;
+  description: string;
+  personality: string[];
+  image: string;
+  adoptionFee: number;
+  medicalHistory: string;
+  specialNeeds: string;
+  energyLevel: string;
+  goodWith: string[];
+}
+
+type PageProps = {
+  params: { 
+    id: string 
+  } & Promise<any>;
+  searchParams?: { [key: string]: string | string[] | undefined } & Promise<any>;
+}
+
+const catData: Cat[] = [
   {
     id: "1",
     name: "Whiskers",
@@ -49,14 +75,24 @@ const catData = [
   }
 ];
 
-export default function CatDetailPage({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const cat = catData.find(c => c.id === params.id);
+  return {
+    title: cat ? `${cat.name} - PawPals Adoption` : 'Cat Not Found',
+    description: cat ? `Adopt ${cat.name}, a ${cat.breed} looking for a forever home` : 'Cat not found'
+  };
+}
+
+export default function CatDetailPage({ params }: PageProps): Promise<React.ReactElement> {
   const cat = catData.find(c => c.id === params.id);
 
   if (!cat) {
-    return <div>Cat not found</div>;
+    return Promise.resolve(
+      <div>Cat not found</div>
+    );
   }
 
-  return (
+  return Promise.resolve(
     <div className="min-h-screen bg-purple-50 py-16">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12">
