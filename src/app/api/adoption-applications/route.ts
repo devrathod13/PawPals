@@ -1,37 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectMongoDB from '@/lib/mongodb';
-import AdoptionApplication from '@/models/AdoptionApplication';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 // Create a new adoption application
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Connect to MongoDB
-    await connectMongoDB();
-
     // Parse the request body
-    const applicationData = await request.json();
+    const applicationData: { [key: string]: any } = await request.json();
 
     // Validate required fields
-    const requiredFields = [
-      'petId', 
-      'petName', 
-      'personalInfo.firstName', 
-      'personalInfo.lastName', 
-      'personalInfo.email', 
-      'personalInfo.phone',
-      'homeInfo.address',
-      'homeInfo.city',
-      'homeInfo.state',
-      'homeInfo.zipCode',
-      'homeInfo.homeType',
-      'employmentInfo.employmentStatus',
-      'additionalInfo.reasonForAdoption'
+    const requiredFields: string[] = [
+      'userId', 
+      'animalId', 
+      'animalType',
+      'notes'
     ];
 
     // Check for missing required fields
     for (const field of requiredFields) {
-      const value = field.split('.').reduce((obj, key) => obj?.[key], applicationData);
-      if (!value) {
+      if (!applicationData[field]) {
         return NextResponse.json(
           { error: `Missing required field: ${field}` }, 
           { status: 400 }
@@ -40,8 +28,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new adoption application
-    const newApplication = new AdoptionApplication(applicationData);
-    await newApplication.save();
+    const newApplication = await prisma.adoption.create({
+      data: {
+        userId: applicationData.userId,
+        animalId: applicationData.animalId,
+        animalType: applicationData.animalType,
+        status: 'PENDING',
+        notes: applicationData.notes
+      }
+    });
 
     // Return the saved application
     return NextResponse.json(
@@ -52,17 +47,9 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Adoption application submission error:', error);
     
-    // Handle specific MongoDB validation errors
-    if (error instanceof Error && error.name === 'ValidationError') {
-      return NextResponse.json(
-        { error: 'Invalid application data', details: error.message }, 
-        { status: 400 }
-      );
-    }
-
     // Generic error response
     return NextResponse.json(
       { error: 'Failed to submit adoption application' }, 
@@ -71,26 +58,25 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Retrieve adoption applications (optional)
-export async function GET(request: NextRequest) {
+// Retrieve adoption applications
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // Connect to MongoDB
-    await connectMongoDB();
-
     // Optional query parameters for filtering
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
-    const email = searchParams.get('email');
+    const status: string | null = searchParams.get('status');
+    const userId: string | null = searchParams.get('userId');
 
     // Build query object
     const query: any = {};
-    if (status) query['status'] = status;
-    if (email) query['personalInfo.email'] = email;
+    if (status) query.status = status;
+    if (userId) query.userId = userId;
 
     // Retrieve applications with optional filtering
-    const applications = await AdoptionApplication.find(query)
-      .sort({ submissionDate: -1 })
-      .limit(50);  // Limit to prevent overwhelming response
+    const applications = await prisma.adoption.findMany({
+      where: query,
+      orderBy: { applicationDate: 'desc' },
+      take: 50  // Limit to prevent overwhelming response
+    });
 
     return NextResponse.json(
       { 
@@ -99,8 +85,7 @@ export async function GET(request: NextRequest) {
       }, 
       { status: 200 }
     );
-
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error retrieving adoption applications:', error);
     return NextResponse.json(
       { error: 'Failed to retrieve adoption applications' }, 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent, useEffect, useCallback } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -42,7 +42,6 @@ const US_STATES = [
 ];
 
 export default function AdoptionApplicationPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -126,49 +125,6 @@ export default function AdoptionApplicationPage() {
     }
   };
 
-  const validateForm = useCallback(() => {
-    const requiredFields: (keyof AdoptionFormData)[] = [
-      'firstName', 'lastName', 'email', 'phone', 
-      'address', 'city', 'state', 'zipCode', 
-      'homeType', 'employmentStatus', 'reasonForAdoption'
-    ];
-
-    for (let field of requiredFields) {
-      if (!formData[field]) {
-        toast.error(`Please fill out the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()} field`);
-        return false;
-      }
-    }
-
-    if (!formData.agreeToHomeVisit) {
-      toast.error('Please agree to the potential home visit');
-      return false;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast.error('Please enter a valid email address');
-      return false;
-    }
-
-    // Phone validation
-    const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      toast.error('Please enter a valid phone number');
-      return false;
-    }
-
-    // Zip code validation
-    const zipRegex = /^\d{5}(-\d{4})?$/;
-    if (!zipRegex.test(formData.zipCode)) {
-      toast.error('Please enter a valid zip code');
-      return false;
-    }
-
-    return true;
-  }, [formData]);
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -230,32 +186,6 @@ export default function AdoptionApplicationPage() {
       setIsSubmitting(false);
     }
   };
-
-  const resetForm = () => {
-    // Reset all form fields
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      address: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      homeType: '',
-      hasYard: false,
-      yardSize: '',
-      hasOtherPets: false,
-      otherPetDetails: '',
-      employmentStatus: '',
-      workSchedule: '',
-      reasonForAdoption: '',
-      previousPetExperience: '',
-      agreeToHomeVisit: false,
-      emergencyContactName: '',
-      emergencyContactPhone: ''
-    });
-  }
 
   if (!isClient) return null;
 

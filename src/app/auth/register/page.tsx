@@ -28,7 +28,7 @@ export default function RegisterPage() {
       });
 
       redirect("/auth/login");
-    } catch (error) {
+    } catch {
       redirect("/auth/error");
     }
   }

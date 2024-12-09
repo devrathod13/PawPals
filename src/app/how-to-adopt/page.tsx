@@ -44,27 +44,60 @@ export default function HowToAdoptPage() {
           <h2 className="text-3xl font-semibold mb-6 text-gray-800">Why Adopt?</h2>
           <ul className="space-y-4 text-gray-700">
             <li className="flex items-center">
-              <span className="mr-3 text-2xl">❤️</span> Save a life and give a loving home
+              <span className="mr-3 text-2xl">❤️</span> 
+              <div>
+                <strong>Save a Life</strong>
+                <p className="text-sm text-gray-600">Every adoption directly saves an animal from potential euthanasia and gives them a second chance at happiness.</p>
+              </div>
             </li>
             <li className="flex items-center">
-              <span className="mr-3 text-2xl">🐶</span> Reduce shelter overcrowding
+              <span className="mr-3 text-2xl">🐶</span> 
+              <div>
+                <strong>Reduce Shelter Overcrowding</strong>
+                <p className="text-sm text-gray-600">By adopting, you help shelters manage limited resources and create space for more animals in need.</p>
+              </div>
             </li>
             <li className="flex items-center">
-              <span className="mr-3 text-2xl">💖</span> Experience unconditional love
+              <span className="mr-3 text-2xl">💖</span> 
+              <div>
+                <strong>Experience Unconditional Love</strong>
+                <p className="text-sm text-gray-600">Adopted pets often show immense gratitude and form deep, lasting bonds with their new families.</p>
+              </div>
+            </li>
+            <li className="flex items-center">
+              <span className="mr-3 text-2xl">💡</span> 
+              <div>
+                <strong>Cost-Effective</strong>
+                <p className="text-sm text-gray-600">Adoption fees are significantly lower than purchasing from breeders, and often include initial veterinary care.</p>
+              </div>
+            </li>
+            <li className="flex items-center">
+              <span className="mr-3 text-2xl">🌈</span> 
+              <div>
+                <strong>Diverse Selection</strong>
+                <p className="text-sm text-gray-600">Find pets of all ages, sizes, and personalities - from playful puppies to calm senior companions.</p>
+              </div>
             </li>
           </ul>
         </div>
-        <Image 
-          src="/adopt.jpg" 
-          alt="Adoption Process" 
-          width={600} 
-          height={400} 
-          className="rounded-xl shadow-lg"
-        />
+        <div className="relative">
+          <div className="bg-blue-50 rounded-xl overflow-hidden shadow-lg transform transition-transform hover:scale-105">
+            <img 
+              src="/adopt.jpg" 
+              alt="Happy adopted dog with family" 
+              className="w-full h-96 object-cover"
+            />
+            <div className="absolute inset-0 bg-blue-900 bg-opacity-30 flex items-end p-6">
+              <p className="text-white text-xl font-semibold">
+                Every Adoption Tells a Story of Hope
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="bg-blue-50 p-8 rounded-xl">
-        <h2 className="text-3xl font-semibold text-center mb-12 text-gray-800">Adoption Steps</h2>
+        
         <div className="grid md:grid-cols-5 gap-6">
           {adoptionSteps.map((step, index) => (
             <div 

@@ -28,14 +28,7 @@ model Adoption {
   user          User     @relation(fields: [userId], references: [id])
   animalId      Int
   animalType    String
-  status        AdoptionStatus @default(PENDING)
+  status        String   @default("PENDING")
   applicationDate DateTime @default(now())
   notes         String?
-}
-
-enum AdoptionStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  COMPLETED
 }

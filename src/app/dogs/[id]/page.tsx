@@ -1,7 +1,32 @@
 import Image from "next/image";
+import { dogs } from "@/lib/data/dogs";
 import Link from "next/link";
+import { Metadata } from "next";
+import React from 'react';
 
-const dogData = [
+type Dog = {
+  id: string;
+  name: string;
+  breed: string;
+  age: number;
+  gender: string;
+  description: string;
+  personality: string[];
+  image: string;
+  adoptionFee: number;
+  medicalHistory: string;
+  specialNeeds: string;
+  energyLevel: string;
+  goodWith: string[];
+};
+
+type DogParams = {
+  params: { 
+    id: string 
+  }
+}
+
+const dogData: Dog[] = [
   {
     id: "1",
     name: "Max",
@@ -20,7 +45,7 @@ const dogData = [
   {
     id: "2",
     name: "Luna",
-    breed: "German Shepherd",
+    breed: "German Shepherd", 
     age: 5,
     gender: "Female", 
     description: "Intelligent and loyal companion with excellent training.",
@@ -35,8 +60,8 @@ const dogData = [
   {
     id: "3",
     name: "Buddy",
-    breed: "Labrador Mix",
-    age: 2,
+    breed: "Mixed Breed",
+    age: 1,
     gender: "Male",
     description: "Playful young pup looking for an active family.",
     personality: ["Energetic", "Loving", "Curious"],
@@ -49,11 +74,26 @@ const dogData = [
   }
 ];
 
-export default function DogDetailPage({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: DogParams): Promise<Metadata> {
+  const dog = dogData.find(d => d.id === params.id);
+  return {
+    title: dog ? `${dog.name} - PawPals Adoption` : 'Dog Not Found',
+    description: dog ? `Adopt ${dog.name}, a ${dog.breed} looking for a forever home` : 'Dog not found'
+  } as Metadata;
+}
+
+export default function DogDetailPage({ params }: DogParams): React.ReactElement {
   const dog = dogData.find(d => d.id === params.id);
 
   if (!dog) {
-    return <div>Dog not found</div>;
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <h1 className="text-4xl font-bold mb-4">Dog Not Found</h1>
+        <Link href="/dogs" className="btn-primary">
+          Back to Dogs
+        </Link>
+      </div>
+    );
   }
 
   return (

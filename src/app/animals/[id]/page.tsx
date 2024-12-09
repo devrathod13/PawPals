@@ -1,12 +1,30 @@
 import Image from "next/image";
 import { animals } from "@/lib/data/animals";
 import Link from "next/link";
+import { Metadata } from "next";
+import React from 'react';
 
-export default function AnimalProfilePage({ 
-  params 
-}: { 
-  params: { id: string } 
-}) {
+type Params = {
+  params: { 
+    id: string 
+  }
+}
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const animal = animals.find(a => a.id === parseInt(params.id));
+  return {
+    title: animal ? `${animal.name} - PawPals Adoption` : 'Animal Not Found',
+    description: animal ? `Adopt ${animal.name}, a ${animal.breed} looking for a forever home` : 'Animal not found'
+  } as Metadata;
+}
+
+export async function generateStaticParams() {
+  return animals.map((animal) => ({
+    id: animal.id.toString(),
+  }));
+}
+
+export default function AnimalProfilePage({ params }: Params) {
   const animal = animals.find(a => a.id === parseInt(params.id));
 
   if (!animal) {
