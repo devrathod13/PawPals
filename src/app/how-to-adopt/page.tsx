@@ -19,7 +19,7 @@ export default function HowToAdoptPage() {
     },
     {
       title: "Home Check",
-      description: "We'll verify your home is ready for your new family member.",
+      description: "We&apos;ll verify your home is ready for your new family member.",
       icon: "🏡"
     },
     {
@@ -34,7 +34,7 @@ export default function HowToAdoptPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold mb-4 text-gray-900">Adoption Process</h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Bringing a new pet into your life is a beautiful journey. We're here to make it smooth and joyful.
+          Bringing a new pet into your life is a beautiful journey. We&apos;re here to make it smooth and joyful.
         </p>
       </div>
 

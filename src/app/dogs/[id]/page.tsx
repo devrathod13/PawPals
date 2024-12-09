@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
-import React from 'react';
 
 type Dog = {
   id: string;
@@ -81,7 +80,7 @@ export async function generateMetadata({ params }: DogParams): Promise<Metadata>
   } as Metadata;
 }
 
-export default function DogDetailPage({ params }: DogParams): React.ReactElement {
+export default function DogDetailPage({ params }: DogParams) {
   const dog = dogData.find(d => d.id === params.id);
 
   if (!dog) {
