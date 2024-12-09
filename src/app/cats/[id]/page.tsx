@@ -2,7 +2,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
+<<<<<<< HEAD
 import React from 'react';
+=======
+>>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
 
 interface Cat {
   id: string;
@@ -75,6 +78,7 @@ const catData: Cat[] = [
   }
 ];
 
+<<<<<<< HEAD
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const cat = catData.find(c => c.id === params.id);
   return {
@@ -84,7 +88,48 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default function CatDetailPage({ params }: PageProps): Promise<React.ReactElement> {
+=======
+type CatParams = {
+  params: { 
+    id: string 
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
+  searchParams?: { 
+    [key: string]: string | string[] | undefined 
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
+}
+
+export async function generateMetadata({ params, searchParams }: CatParams): Promise<Metadata> {
+>>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
   const cat = catData.find(c => c.id === params.id);
+  
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Metadata search params:', searchParams);
+  }
+
+  return {
+    title: cat ? `${cat.name} - PawPals Adoption` : 'Cat Not Found',
+    description: cat ? `Adopt ${cat.name}, a ${cat.breed} looking for a forever home` : 'Cat not found'
+  } as Metadata;
+}
+
+export default function CatDetailPage({ params, searchParams }: CatParams) {
+  const cat = catData.find(c => c.id === params.id);
+
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Page search params:', searchParams);
+  }
 
   if (!cat) {
     return Promise.resolve(

@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
+=======
+>>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
 import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
-import React from 'react';
 
 interface Dog {
   id: string;
@@ -23,8 +26,25 @@ interface Dog {
 type PageProps = {
   params: { 
     id: string 
+<<<<<<< HEAD
   } & Promise<any>;
   searchParams?: { [key: string]: string | string[] | undefined } & Promise<any>;
+=======
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
+  searchParams?: { 
+    [key: string]: string | string[] | undefined 
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
+>>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
 }
 
 const dogData: Dog[] = [
@@ -75,16 +95,35 @@ const dogData: Dog[] = [
   }
 ];
 
+<<<<<<< HEAD
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+=======
+export async function generateMetadata({ params, searchParams }: DogParams): Promise<Metadata> {
+>>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
   const dog = dogData.find(d => d.id === params.id);
+  
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Metadata search params:', searchParams);
+  }
+
   return {
     title: dog ? `${dog.name} - PawPals Adoption` : 'Dog Not Found',
     description: dog ? `Adopt ${dog.name}, a ${dog.breed} looking for a forever home` : 'Dog not found'
   };
 }
 
+<<<<<<< HEAD
 export default function DogDetailPage({ params }: PageProps): Promise<React.ReactElement> {
+=======
+export default function DogDetailPage({ params, searchParams }: DogParams) {
+>>>>>>> 9496ab921f672acaac5bca267849361ec90bd34d
   const dog = dogData.find(d => d.id === params.id);
+
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Page search params:', searchParams);
+  }
 
   if (!dog) {
     return Promise.resolve(
@@ -106,9 +145,9 @@ export default function DogDetailPage({ params }: PageProps): Promise<React.Reac
             <Image 
               src={dog.image} 
               alt={dog.name}
-              layout="fill"
-              objectFit="cover"
-              className="hover:scale-105 transition-transform duration-300"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
 

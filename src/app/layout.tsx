@@ -16,6 +16,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://pawpals.com'),
   title: "PawPals: Animal Adoption",
   description: "Find your perfect furry companion and give a loving home to an animal in need",
   keywords: ["animal adoption", "pet rescue", "dog adoption", "cat adoption", "pet shelter"],
