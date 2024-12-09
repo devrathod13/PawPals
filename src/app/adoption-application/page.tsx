@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect, useCallback } from 'react';
+import { useState, FormEvent, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -43,7 +43,7 @@ const isValidCanadianPostalCode = (postalCode: string): boolean => {
   return canadianPostalCodeRegex.test(postalCode);
 };
 
-export default function AdoptionApplicationPage() {
+function AdoptionApplicationContent() {
   const searchParams = useSearchParams();
   const [isClient, setIsClient] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -612,5 +612,13 @@ export default function AdoptionApplicationPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AdoptionApplicationPage() {
+  return (
+    <Suspense fallback={<div>Loading application...</div>}>
+      <AdoptionApplicationContent />
+    </Suspense>
   );
 }

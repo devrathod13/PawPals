@@ -29,11 +29,11 @@ interface AdoptionApplication {
 }
 
 // Simulated database or storage mechanism
-let adoptionApplications: AdoptionApplication[] = [];
+const adoptionApplications: AdoptionApplication[] = [];
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    const applicationData: AdoptionApplication = await request.json();
+    const applicationData = await request.json();
 
     // Validate required fields
     const requiredFields: (keyof AdoptionApplication)[] = [
@@ -67,8 +67,9 @@ export async function POST(request: NextRequest) {
       }, 
       { status: 201 }
     );
-  } catch (error) {
-    console.error('Adoption application submission error:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Adoption application submission error:', errorMessage);
     return NextResponse.json(
       { error: 'Failed to submit adoption application' }, 
       { status: 500 }
@@ -76,6 +77,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   return NextResponse.json(adoptionApplications);
 }

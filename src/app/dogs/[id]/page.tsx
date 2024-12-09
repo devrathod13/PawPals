@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
 
 type Dog = {
@@ -21,7 +21,20 @@ type Dog = {
 type DogParams = {
   params: { 
     id: string 
-  }
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
+  searchParams?: { 
+    [key: string]: string | string[] | undefined 
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
 }
 
 const dogData: Dog[] = [
@@ -72,16 +85,27 @@ const dogData: Dog[] = [
   }
 ];
 
-export async function generateMetadata({ params }: DogParams): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: DogParams): Promise<Metadata> {
   const dog = dogData.find(d => d.id === params.id);
+  
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Metadata search params:', searchParams);
+  }
+
   return {
     title: dog ? `${dog.name} - PawPals Adoption` : 'Dog Not Found',
     description: dog ? `Adopt ${dog.name}, a ${dog.breed} looking for a forever home` : 'Dog not found'
   } as Metadata;
 }
 
-export default function DogDetailPage({ params }: DogParams) {
+export default function DogDetailPage({ params, searchParams }: DogParams) {
   const dog = dogData.find(d => d.id === params.id);
+
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Page search params:', searchParams);
+  }
 
   if (!dog) {
     return (
@@ -103,9 +127,9 @@ export default function DogDetailPage({ params }: DogParams) {
             <Image 
               src={dog.image} 
               alt={dog.name}
-              layout="fill"
-              objectFit="cover"
-              className="hover:scale-105 transition-transform duration-300"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
 

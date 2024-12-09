@@ -1,5 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Metadata } from 'next';
+
+type OtherPetParams = {
+  params: { 
+    id: string 
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
+  searchParams?: { 
+    [key: string]: string | string[] | undefined 
+  } & Promise<{
+    then: () => void;
+    catch: () => void;
+    finally: () => void;
+    [Symbol.toStringTag]: string;
+  }>;
+}
 
 const otherPetsData = [
   {
@@ -56,8 +76,27 @@ const otherPetsData = [
   }
 ];
 
-export default function OtherPetDetailPage({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params, searchParams }: OtherPetParams): Promise<Metadata> {
   const pet = otherPetsData.find(p => p.id === params.id);
+  
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Metadata search params:', searchParams);
+  }
+
+  return {
+    title: pet ? `${pet.name} - PawPals Adoption` : 'Pet Not Found',
+    description: pet ? `Adopt ${pet.name}, a ${pet.type} looking for a forever home` : 'Pet not found'
+  } as Metadata;
+}
+
+export default function OtherPetDetailPage({ params, searchParams }: OtherPetParams) {
+  const pet = otherPetsData.find(p => p.id === params.id);
+
+  // Optional: log or use searchParams if needed
+  if (searchParams && Object.keys(searchParams).length > 0) {
+    console.log('Page search params:', searchParams);
+  }
 
   if (!pet) {
     return <div>Pet not found</div>;
